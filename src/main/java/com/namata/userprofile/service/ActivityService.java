@@ -47,8 +47,7 @@ public class ActivityService {
                 .likes(0)
                 .comments(0)
                 .isPublic(activityDTO.getIsPublic() != null ? activityDTO.getIsPublic() : true)
-                .completedAt(activityDTO.getCompletedAt() != null ? 
-                    activityDTO.getCompletedAt() : LocalDateTime.now())
+                .completedAt(activityDTO.getCompletedAt() != null ? activityDTO.getCompletedAt() : LocalDateTime.now())
                 .build();
 
         Activity savedActivity = activityRepository.save(activity);
@@ -93,7 +92,6 @@ public class ActivityService {
 
     @Transactional(readOnly = true)
     public List<ActivityDTO> getRecentActivities(int limit) {
-        LocalDateTime startDate = LocalDateTime.now().minusDays(7); // Últimos 7 dias
         return activityRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .limit(limit)
