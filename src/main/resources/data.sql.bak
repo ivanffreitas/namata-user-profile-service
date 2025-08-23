@@ -1,0 +1,28 @@
+-- Script para inserir dados de teste para o ranking
+-- Execute este script após a aplicação estar rodando e as tabelas criadas
+
+-- Inserir 10 perfis de usuários com dados variados para teste do ranking
+INSERT INTO user_profiles (user_id, display_name, experience_level, location, profile_picture_url, is_active, is_verified, created_at, updated_at) VALUES
+(1, 'Ana Silva', 'EXPERT', 'São Paulo, SP', 'https://example.com/avatar1.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'Carlos Santos', 'EXPERT', 'Rio de Janeiro, RJ', 'https://example.com/avatar2.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'Maria Oliveira', 'ADVANCED', 'Belo Horizonte, MG', 'https://example.com/avatar3.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'João Pereira', 'ADVANCED', 'Curitiba, PR', 'https://example.com/avatar4.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'Fernanda Costa', 'EXPERT', 'Porto Alegre, RS', 'https://example.com/avatar5.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(6, 'Pedro Lima', 'INTERMEDIATE', 'Salvador, BA', 'https://example.com/avatar6.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, 'Juliana Rocha', 'ADVANCED', 'Fortaleza, CE', 'https://example.com/avatar7.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(8, 'Roberto Alves', 'EXPERT', 'Brasília, DF', 'https://example.com/avatar8.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(9, 'Camila Ferreira', 'INTERMEDIATE', 'Recife, PE', 'https://example.com/avatar9.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(10, 'Lucas Martins', 'ADVANCED', 'Manaus, AM', 'https://example.com/avatar10.jpg', true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Inserir estatísticas variadas para cada usuário
+INSERT INTO statistics (user_profile_id, total_trails_completed, total_distance_km, total_time_minutes, total_elevation_gain_m, longest_trail_km, highest_elevation_m, total_photos_shared, total_reviews_posted, total_likes_received, total_comments_received, total_badges_earned, total_points, current_streak, longest_streak, total_followers, total_following, total_guides_booked, global_rank, local_rank, created_at, updated_at, last_activity_at) VALUES
+(1, 150, 2500.5, 7500, 45000.0, 85, 1200, 45, 12, 150, 75, 25, 15000, 15, 20, 120, 80, 5, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 145, 2400.2, 7250, 43500.0, 82, 1180, 42, 11, 145, 72, 24, 14500, 14, 19, 115, 78, 5, 2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 140, 2300.8, 7000, 42000.0, 80, 1160, 40, 10, 140, 70, 23, 14000, 13, 18, 110, 75, 4, 3, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 135, 2200.4, 6750, 40500.0, 78, 1140, 38, 9, 135, 68, 22, 13500, 12, 17, 105, 72, 4, 4, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 130, 2100.1, 6500, 39000.0, 75, 1120, 35, 8, 130, 65, 21, 13000, 11, 16, 100, 70, 4, 5, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(6, 125, 2000.7, 6250, 37500.0, 72, 1100, 32, 7, 125, 62, 20, 12500, 10, 15, 95, 68, 3, 6, 6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, 120, 1900.3, 6000, 36000.0, 70, 1080, 30, 6, 120, 60, 19, 12000, 9, 14, 90, 65, 3, 7, 7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(8, 115, 1800.9, 5750, 34500.0, 68, 1060, 28, 5, 115, 58, 18, 11500, 8, 13, 85, 62, 3, 8, 8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(9, 110, 1700.5, 5500, 33000.0, 65, 1040, 25, 4, 110, 55, 17, 11000, 7, 12, 80, 60, 2, 9, 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(10, 105, 1600.2, 5250, 31500.0, 62, 1020, 22, 3, 105, 52, 16, 10500, 6, 11, 75, 58, 2, 10, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

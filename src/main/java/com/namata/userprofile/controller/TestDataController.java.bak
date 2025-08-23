@@ -1,0 +1,167 @@
+package com.namata.userprofile.controller;
+
+import com.namata.userprofile.entity.UserProfile;
+import com.namata.userprofile.entity.Statistics;
+import com.namata.userprofile.repository.UserProfileRepository;
+import com.namata.userprofile.repository.StatisticsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+@RestController
+@RequestMapping("/api/v1/test")
+public class TestDataController {
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private StatisticsRepository statisticsRepository;
+
+    @PostMapping("/insert-test-data")
+    public ResponseEntity<Map<String, Object>> insertTestData() {
+        try {
+            // Dados de teste para usuários
+            String[] names = {
+                "Ana Silva", "Carlos Santos", "Maria Oliveira", "João Pereira", "Fernanda Costa",
+                "Pedro Lima", "Juliana Rocha", "Roberto Alves", "Camila Ferreira", "Lucas Martins",
+                "Beatriz Souza", "Rafael Dias", "Larissa Gomes", "Thiago Ribeiro", "Amanda Castro",
+                "Diego Barbosa", "Gabriela Mendes", "Mateus Cardoso", "Isabela Nunes", "Gustavo Teixeira",
+                "Natália Moreira", "Bruno Correia", "Vanessa Pinto", "André Vieira", "Priscila Araújo",
+                "Felipe Ramos", "Carla Freitas", "Rodrigo Silva", "Aline Santos", "Marcelo Costa",
+                "Renata Lima", "Fábio Rocha", "Patrícia Alves", "Leonardo Ferreira", "Cristina Martins",
+                "Vinicius Souza", "Tatiana Dias", "Henrique Gomes", "Simone Ribeiro", "Alexandre Castro",
+                "Mônica Barbosa", "Danilo Mendes", "Eliane Cardoso", "Ricardo Nunes", "Luciana Teixeira",
+                "Sérgio Moreira", "Adriana Correia", "Márcio Pinto", "Cláudia Vieira", "Edson Araújo",
+                "Silvia Ramos", "Paulo Freitas", "Rosana Silva", "Júlio Santos", "Vera Costa",
+                "Antônio Lima", "Lúcia Rocha", "José Alves", "Helena Ferreira", "Rogério Martins",
+                "Célia Souza", "Marcos Dias", "Denise Gomes", "Flávio Ribeiro", "Marta Castro",
+                "Luiz Barbosa", "Sandra Mendes", "Gilberto Cardoso", "Neusa Nunes", "Wilson Teixeira",
+                "Ivone Moreira", "Geraldo Correia", "Solange Pinto", "Valter Vieira", "Glória Araújo",
+                "Osvaldo Ramos", "Terezinha Freitas", "Sebastião Silva", "Aparecida Santos", "Francisco Costa",
+                "Conceição Lima", "Raimundo Rocha", "Francisca Alves", "Edivaldo Ferreira", "Raimunda Martins",
+                "Domingos Souza", "Antônia Dias", "Manoel Gomes", "Josefa Ribeiro", "Benedito Castro",
+                "Iracema Barbosa", "Severino Mendes", "Zilda Cardoso", "Joaquim Nunes", "Dalva Teixeira",
+                "Expedito Moreira", "Creusa Correia", "Lindomar Pinto", "Odete Vieira", "Valdeci Araújo"
+            };
+
+            String[] explorerNames = {
+                "Trilheira Ana", "Montanhista Carlos", "Aventureira Maria", "Caminhante João", "Exploradora Fernanda",
+                "Trilheiro Pedro", "Aventureira Juliana", "Montanhista Roberto", "Trilheira Camila", "Explorador Lucas",
+                "Caminhante Beatriz", "Aventureiro Rafael", "Trilheira Larissa", "Montanhista Thiago", "Exploradora Amanda",
+                "Caminhante Diego", "Aventureira Gabriela", "Trilheiro Mateus", "Montanhista Isabela", "Explorador Gustavo",
+                "Caminhante Natália", "Aventureiro Bruno", "Trilheira Vanessa", "Montanhista André", "Exploradora Priscila",
+                "Caminhante Felipe", "Aventureira Carla", "Trilheiro Rodrigo", "Montanhista Aline", "Explorador Marcelo",
+                "Caminhante Renata", "Aventureiro Fábio", "Trilheira Patrícia", "Montanhista Leonardo", "Exploradora Cristina",
+                "Caminhante Vinicius", "Aventureira Tatiana", "Trilheiro Henrique", "Montanhista Simone", "Explorador Alexandre",
+                "Caminhante Mônica", "Aventureiro Danilo", "Trilheira Eliane", "Montanhista Ricardo", "Exploradora Luciana",
+                "Caminhante Sérgio", "Aventureira Adriana", "Trilheiro Márcio", "Montanhista Cláudia", "Explorador Edson",
+                "Caminhante Silvia", "Aventureiro Paulo", "Trilheira Rosana", "Montanhista Júlio", "Exploradora Vera",
+                "Caminhante Antônio", "Aventureira Lúcia", "Trilheiro José", "Montanhista Helena", "Explorador Rogério",
+                "Caminhante Célia", "Aventureiro Marcos", "Trilheira Denise", "Montanhista Flávio", "Exploradora Marta",
+                "Caminhante Luiz", "Aventureira Sandra", "Trilheiro Gilberto", "Montanhista Neusa", "Explorador Wilson",
+                "Caminhante Ivone", "Aventureiro Geraldo", "Trilheira Solange", "Montanhista Valter", "Exploradora Glória",
+                "Caminhante Osvaldo", "Aventureira Terezinha", "Trilheiro Sebastião", "Montanhista Aparecida", "Explorador Francisco",
+                "Caminhante Conceição", "Aventureiro Raimundo", "Trilheira Francisca", "Montanhista Edivaldo", "Exploradora Raimunda",
+                "Caminhante Domingos", "Aventureira Antônia", "Trilheiro Manoel", "Montanhista Josefa", "Explorador Benedito",
+                "Caminhante Iracema", "Aventureiro Severino", "Trilheira Zilda", "Montanhista Joaquim", "Exploradora Dalva",
+                "Caminhante Expedito", "Aventureira Creusa", "Trilheiro Lindomar", "Montanhista Odete", "Explorador Valdeci"
+            };
+
+            UserProfile.ExperienceLevel[] levels = {UserProfile.ExperienceLevel.EXPERT, UserProfile.ExperienceLevel.ADVANCED, UserProfile.ExperienceLevel.INTERMEDIATE, UserProfile.ExperienceLevel.BEGINNER};
+            String[] locations = {
+                "São Paulo, SP", "Rio de Janeiro, RJ", "Belo Horizonte, MG", "Curitiba, PR", "Porto Alegre, RS",
+                "Salvador, BA", "Fortaleza, CE", "Brasília, DF", "Recife, PE", "Manaus, AM",
+                "Goiânia, GO", "Belém, PA", "Vitória, ES", "Florianópolis, SC", "Campo Grande, MS",
+                "Teresina, PI", "João Pessoa, PB", "Aracaju, SE", "Maceió, AL", "Natal, RN",
+                "Cuiabá, MT", "Palmas, TO", "Boa Vista, RR", "Macapá, AP", "Rio Branco, AC", "São Luís, MA"
+            };
+
+            List<UserProfile> userProfiles = new ArrayList<>();
+            List<Statistics> statistics = new ArrayList<>();
+
+            Random random = new Random();
+
+            for (int i = 0; i < 100; i++) {
+                // Criar perfil de usuário
+                UserProfile userProfile = new UserProfile();
+                userProfile.setUserId((long) (i + 1));
+                userProfile.setDisplayName(names[i]);
+                userProfile.setExperienceLevel(levels[random.nextInt(levels.length)]);
+                userProfile.setLocation(locations[random.nextInt(locations.length)]);
+                userProfile.setProfilePictureUrl("https://example.com/avatar" + (i + 1) + ".jpg");
+                
+                userProfiles.add(userProfile);
+            }
+
+            // Salvar perfis de usuários primeiro
+            List<UserProfile> savedUserProfiles = userProfileRepository.saveAll(userProfiles);
+
+            // Criar estatísticas para cada usuário
+            for (int i = 0; i < savedUserProfiles.size(); i++) {
+                UserProfile userProfile = savedUserProfiles.get(i);
+                Statistics stat = new Statistics();
+                stat.setUserProfile(userProfile);
+                
+                // Gerar dados variados baseados na posição para criar um ranking interessante
+                int basePoints = 15000 - (i * 150) + random.nextInt(100);
+                int trails = 150 - (i * 1) + random.nextInt(10);
+                double distance = 2500.0 - (i * 25.0) + random.nextDouble() * 10;
+                int elevation = 45000 - (i * 450) + random.nextInt(500);
+                int badges = Math.max(0, 25 - (i / 4));
+                
+                stat.setTotalPoints(Math.max(100, basePoints));
+                stat.setTotalTrailsCompleted(Math.max(1, trails));
+                stat.setTotalDistanceKm(Math.max(5.0, distance));
+                stat.setTotalElevationGainM(Math.max(10.0, (double) elevation));
+                stat.setTotalBadgesEarned(badges);
+                stat.setGlobalRank(i + 1);
+                stat.setLocalRank(i + 1);
+                stat.setCreatedAt(LocalDateTime.now());
+                stat.setUpdatedAt(LocalDateTime.now());
+                
+                statistics.add(stat);
+            }
+
+            // Salvar estatísticas
+            statisticsRepository.saveAll(statistics);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "100 usuários e estatísticas inseridos com sucesso!");
+            response.put("userProfilesCreated", savedUserProfiles.size());
+            response.put("statisticsCreated", statistics.size());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Erro ao inserir dados de teste: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @DeleteMapping("/clear-test-data")
+    public ResponseEntity<Map<String, Object>> clearTestData() {
+        try {
+            statisticsRepository.deleteAll();
+            userProfileRepository.deleteAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Todos os dados de teste foram removidos!");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Erro ao limpar dados de teste: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+}

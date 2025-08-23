@@ -1,0 +1,48 @@
+# Arquivos e diretórios a serem ignorados pelo Docker
+
+# Diretórios de build
+target/
+build/
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de backup
+*.bak
+*.swp
+*.swo
+
+# Node modules (se houver)
+node_modules/
+
+# Arquivos de teste
+src/test/
+
+# Documentação
+README.md
+docs/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
