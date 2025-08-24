@@ -15,8 +15,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -231,7 +236,45 @@ public class UserProfileService {
         return new PageImpl<>(pageContent, pageable, profileDTOs.size());
     }
 
-
+    public UserProfileDTO updateProfilePicture(UUID userId, MultipartFile file) {
+        log.info("Atualizando foto de perfil para usuário ID: {}", userId);
+        
+        UserProfile profile = userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o usuário: " + userId));
+        
+        try {
+            // Criar diretório se não existir
+            String uploadDir = "C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures/";
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            
+            // Gerar nome único para o arquivo
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String filename = userId + "_" + System.currentTimeMillis() + fileExtension;
+            
+            // Salvar arquivo
+            Path filePath = uploadPath.resolve(filename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
+            // Atualizar URL no perfil
+            String profilePictureUrl = "/uploads/profile-pictures/" + filename;
+            profile.setProfilePictureUrl(profilePictureUrl);
+            
+            UserProfile savedProfile = userProfileRepository.save(profile);
+            log.info("Foto de perfil atualizada com sucesso para usuário ID: {}", userId);
+            
+            return convertToDTO(savedProfile);
+            
+        } catch (IOException e) {
+            log.error("Erro ao salvar arquivo de imagem: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
+        }
+    }
 
     private UserProfileDTO convertToDTO(UserProfile profile) {
         // Buscar estatísticas básicas

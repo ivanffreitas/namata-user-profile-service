@@ -19,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -227,7 +228,37 @@ public class UserProfileController {
         return ResponseEntity.ok(profiles);
     }
 
-
+    @PostMapping("/{userId}/profile-picture")
+    @Operation(summary = "Upload de foto de perfil", description = "Faz upload da foto de perfil do usuário")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Foto atualizada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Arquivo inválido"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    public ResponseEntity<UserProfileDTO> uploadProfilePicture(
+            @Parameter(description = "ID do usuário") @PathVariable UUID userId,
+            @Parameter(description = "Arquivo de imagem") @RequestParam("file") MultipartFile file) {
+        log.info("Recebida solicitação para upload de foto de perfil para usuário ID: {}", userId);
+        
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        // Validar tipo de arquivo
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            log.warn("Tipo de arquivo inválido: {}", contentType);
+            return ResponseEntity.badRequest().build();
+        }
+        
+        try {
+            UserProfileDTO updatedProfile = userProfileService.updateProfilePicture(userId, file);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (Exception e) {
+            log.error("Erro ao fazer upload da foto de perfil: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
