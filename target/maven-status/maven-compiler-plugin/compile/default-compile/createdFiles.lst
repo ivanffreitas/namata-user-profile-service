@@ -5,10 +5,12 @@ com\namata\userprofile\entity\UserProfile$ExperienceLevel.class
 com\namata\userprofile\config\TestSecurityConfig.class
 com\namata\userprofile\config\DatabaseConfig.class
 com\namata\userprofile\dto\UpdateUserProfileRequest$UpdateUserProfileRequestBuilder.class
+com\namata\userprofile\client\AuthServiceClientConfig.class
 com\namata\userprofile\entity\Activity$ActivityBuilder.class
 com\namata\userprofile\service\BadgeService.class
 com\namata\userprofile\controller\AchievementController.class
 com\namata\userprofile\dto\CreateUserProfileRequest.class
+com\namata\userprofile\client\AuthServiceClient.class
 com\namata\userprofile\entity\UserProfile$Interest.class
 com\namata\userprofile\repository\BadgeRepository.class
 com\namata\userprofile\entity\UserProfile$PrivacyLevel.class
@@ -36,6 +38,7 @@ com\namata\userprofile\entity\Activity.class
 com\namata\userprofile\entity\UserProfile$ExplorationType.class
 com\namata\userprofile\entity\Badge$Rarity.class
 com\namata\userprofile\entity\UserProfile$Gender.class
+com\namata\userprofile\config\StaticResourceConfig.class
 com\namata\userprofile\repository\AchievementRepository.class
 com\namata\userprofile\entity\Achievement$AchievementBuilder.class
 com\namata\userprofile\entity\Achievement.class
@@ -43,6 +46,7 @@ com\namata\userprofile\dto\CreateUserProfileRequest$CreateUserProfileRequestBuil
 com\namata\userprofile\config\DevSecurityConfig.class
 com\namata\userprofile\dto\UserProfileDTO.class
 com\namata\userprofile\entity\Statistics.class
+com\namata\userprofile\client\AuthServiceClientConfig$AuthServiceErrorDecoder.class
 com\namata\userprofile\service\AchievementService.class
 com\namata\userprofile\service\ActivityService.class
 com\namata\userprofile\dto\ActivityDTO$ActivityDTOBuilder.class
