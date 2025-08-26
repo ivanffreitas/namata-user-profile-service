@@ -10,7 +10,7 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Configurar para servir imagens de perfil
-        registry.addResourceHandler("/profile-pictures/**")
-                .addResourceLocations("file:C:/Users/Ivanilson/Projetos/NaMata/profile-pictures/");
+        registry.addResourceHandler("/uploads/profile-pictures/**")
+                .addResourceLocations("file:C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures/");
     }
 }

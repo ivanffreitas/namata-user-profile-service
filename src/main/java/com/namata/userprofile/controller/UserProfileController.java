@@ -180,6 +180,16 @@ public class UserProfileController {
         return ResponseEntity.ok(profiles);
     }
     
+    @GetMapping("/count/active")
+    @Operation(summary = "Contar perfis ativos", description = "Retorna a contagem de perfis ativos")
+    @ApiResponse(responseCode = "200", description = "Contagem de perfis ativos")
+    public ResponseEntity<Long> countActiveProfiles() {
+        log.info("Buscando contagem de perfis ativos");
+        
+        long count = userProfileService.countActiveProfiles();
+        return ResponseEntity.ok(count);
+    }
+    
     @GetMapping("/test")
     public ResponseEntity<String> testEndpoint() {
         try {
