@@ -3,7 +3,9 @@ package com.namata.userprofile.controller;
 import com.namata.userprofile.dto.CreateUserProfileRequest;
 import com.namata.userprofile.dto.UpdateUserProfileRequest;
 import com.namata.userprofile.dto.UserProfileDTO;
+import com.namata.userprofile.entity.Achievement;
 import com.namata.userprofile.entity.UserProfile;
+import com.namata.userprofile.service.AchievementService;
 import com.namata.userprofile.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,6 +35,7 @@ import java.util.UUID;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
+    private final AchievementService achievementService;
 
     @PostMapping
     @Operation(summary = "Criar perfil de usuário", description = "Cria um novo perfil de usuário")
@@ -214,6 +217,24 @@ public class UserProfileController {
         Page<UserProfileDTO> profiles = userProfileService.searchProfiles(
                 displayName, location, experienceLevel, pageable);
         return ResponseEntity.ok(profiles);
+    }
+
+    @GetMapping("/user/{userId}/achievements")
+    @Operation(summary = "Buscar conquistas do usuário", description = "Retorna todas as conquistas de um usuário específico")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de conquistas do usuário"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    public ResponseEntity<List<Achievement>> getUserAchievements(
+            @Parameter(description = "ID do usuário") @PathVariable UUID userId) {
+        log.info("Buscando conquistas do usuário ID: {}", userId);
+        
+        try {
+            List<Achievement> achievements = achievementService.getUserAchievements(userId);
+            return ResponseEntity.ok(achievements);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/location/{location}")

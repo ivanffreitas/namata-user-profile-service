@@ -17,13 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import io.jsonwebtoken.security.Keys;
 
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@Profile({"!h2", "!dev"})
+@Profile({ "!h2", "!dev" })
 public class SecurityConfig {
 
     @Value("${app.auth.jwt.secret}")
@@ -33,49 +32,46 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
         return http
-            .securityMatcher("/api/v1/test/**")
-            .cors().and()
-            .csrf().disable()
-            .authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
-            .build();
+                .securityMatcher("/api/v1/test/**")
+                .cors().and()
+                .csrf().disable()
+                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
+                .build();
     }
 
     @Bean
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors().and()
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests(authz -> authz
-                // Endpoints públicos (sem autenticação)
-                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/badges/active", "/api/v1/badges/type/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/ranking/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/averages/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/max/**").permitAll()
-                
-                // Endpoints que requerem autenticação
-                .requestMatchers("/api/v1/profiles/**").authenticated()
-                .requestMatchers("/api/v1/activities/**").authenticated()
-                .requestMatchers("/api/v1/achievements/**").authenticated()
-                .requestMatchers("/api/v1/statistics/user/**").authenticated()
-                
-                // Endpoints administrativos
-                .requestMatchers(HttpMethod.POST, "/api/v1/badges/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/badges/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/badges/**").hasRole("ADMIN")
-                
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt
-                    .decoder(jwtDecoder())
-                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-            );
+                .cors().and()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests(authz -> authz
+                        // Endpoints públicos (sem autenticação)
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/badges/active", "/api/v1/badges/type/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/ranking/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/averages/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/max/**").permitAll()
+
+                        // Endpoints que requerem autenticação
+                        .requestMatchers("/api/v1/profiles/**").authenticated()
+                        .requestMatchers("/api/v1/activities/**").authenticated()
+                        .requestMatchers("/api/v1/achievements/**").authenticated()
+                        .requestMatchers("/api/v1/statistics/user/**").authenticated()
+
+                        // Endpoints administrativos
+                        .requestMatchers(HttpMethod.POST, "/api/v1/badges/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/badges/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/badges/**").hasRole("ADMIN")
+
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }

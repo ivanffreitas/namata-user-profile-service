@@ -1,6 +1,5 @@
 package com.namata.userprofile.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,12 +17,11 @@ public class DevSecurityConfig {
     @Order(1)
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            )
-            .headers(headers -> headers.frameOptions().disable());
-        
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll())
+                .headers(headers -> headers.frameOptions().disable());
+
         return http.build();
     }
 }

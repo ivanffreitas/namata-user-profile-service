@@ -1,5 +1,6 @@
 package com.namata.userprofile.controller;
 
+import com.namata.userprofile.dto.BadgeDTO;
 import com.namata.userprofile.entity.Badge;
 import com.namata.userprofile.service.BadgeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -221,6 +222,24 @@ public class BadgeController {
             return ResponseEntity.ok(count);
         } catch (Exception e) {
             log.error("Erro ao contar badges por tipo: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/simple")
+    @Operation(summary = "Listar insígnias simples", description = "Retorna todas as insígnias ativas em formato simplificado")
+    @ApiResponse(responseCode = "200", description = "Lista de insígnias simplificadas")
+    public ResponseEntity<List<BadgeDTO>> getSimpleBadges() {
+        log.info("Buscando insígnias em formato simplificado");
+        
+        try {
+            List<Badge> badges = badgeService.getAllActiveBadges();
+            List<BadgeDTO> badgeDTOs = badges.stream()
+                    .map(BadgeDTO::fromEntity)
+                    .toList();
+            return ResponseEntity.ok(badgeDTOs);
+        } catch (Exception e) {
+            log.error("Erro ao buscar badges simplificados: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

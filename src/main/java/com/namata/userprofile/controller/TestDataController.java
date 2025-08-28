@@ -2,24 +2,49 @@ package com.namata.userprofile.controller;
 
 import com.namata.userprofile.entity.UserProfile;
 import com.namata.userprofile.entity.Statistics;
+import com.namata.userprofile.entity.Achievement;
+import com.namata.userprofile.entity.Badge;
 import com.namata.userprofile.repository.UserProfileRepository;
 import com.namata.userprofile.repository.StatisticsRepository;
+import com.namata.userprofile.repository.AchievementRepository;
+import com.namata.userprofile.repository.BadgeRepository;
+import com.namata.userprofile.service.AchievementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/test")
 public class TestDataController {
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("message", "TestDataController está funcionando!");
+        response.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.ok(response);
+    }
 
     @Autowired
     private UserProfileRepository userProfileRepository;
 
     @Autowired
     private StatisticsRepository statisticsRepository;
+
+    @Autowired
+    private BadgeRepository badgeRepository;
+
+    @Autowired
+    private AchievementRepository achievementRepository;
+
+    @Autowired
+    private AchievementService achievementService;
 
     @PostMapping("/insert-test-data")
     public ResponseEntity<Map<String, Object>> insertTestData() {
@@ -378,9 +403,66 @@ public class TestDataController {
         }
     }
 
+    @PostMapping("/create-test-achievements")
+    public ResponseEntity<Map<String, Object>> createTestAchievements() {
+        try {
+            // Buscar todos os perfis de usuário
+            List<UserProfile> userProfiles = userProfileRepository.findAll();
+            
+            // Buscar badges ativos
+            List<Badge> activeBadges = badgeRepository.findByIsActiveTrueOrderByCreatedAtDesc();
+            
+            int achievementsCreated = 0;
+            
+            // Criar conquistas para alguns usuários
+            for (int i = 0; i < Math.min(userProfiles.size(), 10); i++) {
+                UserProfile userProfile = userProfiles.get(i);
+                
+                // Criar conquista para o primeiro badge disponível
+                if (!activeBadges.isEmpty()) {
+                    Badge badge = activeBadges.get(0);
+                    
+                    // Verificar se já existe conquista para este usuário e badge
+                    if (!achievementRepository.existsByUserProfileAndBadge(userProfile, badge)) {
+                        Achievement achievement = achievementService.createAchievement(
+                            userProfile.getUserId(),
+                            badge.getId(),
+                            "Conquista de teste criada automaticamente",
+                            badge.getMaxProgress(),
+                            Map.of("test_data", true, "created_by", "TestDataController")
+                        );
+                        
+                        // Completar a conquista
+                        achievementService.completeAchievement(achievement.getId());
+                        achievementsCreated++;
+                    }
+                }
+            }
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Conquistas de teste criadas com sucesso!");
+            response.put("achievementsCreated", achievementsCreated);
+            response.put("totalUsers", userProfiles.size());
+            response.put("totalBadges", activeBadges.size());
+            response.put("timestamp", LocalDateTime.now());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Erro ao criar conquistas: " + e.getMessage());
+            response.put("error", e.getClass().getSimpleName());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
     @DeleteMapping("/clear-test-data")
     public ResponseEntity<Map<String, Object>> clearTestData() {
         try {
+            achievementRepository.deleteAll();
             statisticsRepository.deleteAll();
             userProfileRepository.deleteAll();
 

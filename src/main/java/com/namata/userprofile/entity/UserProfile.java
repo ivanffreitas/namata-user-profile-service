@@ -118,7 +118,7 @@ public class UserProfile {
     }
 
     public enum ExplorationType {
-        HIKING, PHOTOGRAPHY, BIRDWATCHING, ADVENTURE, RESEARCH, RELAXATION
+        HIKING, PHOTOGRAPHY, BIRDWATCHING, ADVENTURE, RESEARCH, RELAXATION, NATURE_OBSERVATION
     }
 
     public enum PrivacyLevel {
