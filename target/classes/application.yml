@@ -1,5 +1,6 @@
 server:
-  port: 8082
+  port: 8086
+  address: 0.0.0.0
 
 spring:
   application:
@@ -18,7 +19,7 @@ spring:
       max-request-size: 100MB
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/namata_profile
+    url: jdbc:postgresql://192.168.1.9:5432/namata_profile
     username: ${DB_USERNAME:postgres} 
     password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
@@ -76,7 +77,9 @@ app:
       secret: ${JWT_SECRET:NaMataSecretKeyForJWTTokenGenerationAndValidation2024}
   services:
     auth-service:
-      url: ${AUTH_SERVICE_URL:http://localhost:8080}
+      url: ${AUTH_SERVICE_URL:http://192.168.1.9:8082}
+    trail-service:
+      url: ${TRAIL_SERVICE_URL:http://192.168.1.9:8085}
 
 logging:
   level:

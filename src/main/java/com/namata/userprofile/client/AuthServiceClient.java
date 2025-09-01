@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @FeignClient(
     name = "auth-service",
-    url = "${app.services.auth-service.url:http://localhost:8080}",
+    url = "${app.services.auth-service.url:http://192.168.1.9:8082}",
     configuration = AuthServiceClientConfig.class
 )
 public interface AuthServiceClient {

@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8086
   address: 0.0.0.0
 
 spring:
@@ -44,7 +44,7 @@ jwt:
   secret: ${JWT_SECRET:NaMataSecretKeyForJWTTokenGenerationAndValidation2024}
 
 auth-service:
-  url: ${AUTH_SERVICE_URL:http://192.168.1.9:8080}
+  url: ${AUTH_SERVICE_URL:http://192.168.1.9:8082}
 
 logging:
   level:
