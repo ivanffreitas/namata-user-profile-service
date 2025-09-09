@@ -297,6 +297,24 @@ public class UserProfileController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @GetMapping("/user/{userId}/display-name")
+    @Operation(summary = "Buscar nome de exibição do usuário", description = "Retorna apenas o nome de exibição de um usuário (endpoint público)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Nome encontrado"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    public ResponseEntity<String> getUserDisplayName(
+            @Parameter(description = "ID do usuário") @PathVariable UUID userId) {
+        log.info("Buscando nome de exibição do usuário ID: {}", userId);
+        
+        Optional<UserProfileDTO> profile = userProfileService.getProfileByUserId(userId);
+        if (profile.isPresent()) {
+            String displayName = profile.get().getDisplayName();
+            return ResponseEntity.ok(displayName != null ? displayName : "Usuário");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception e) {
         log.error("Erro interno do servidor: {}", e.getMessage(), e);

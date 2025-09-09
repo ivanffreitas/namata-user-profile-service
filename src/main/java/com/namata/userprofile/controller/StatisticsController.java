@@ -1,6 +1,7 @@
 package com.namata.userprofile.controller;
 
 import com.namata.userprofile.dto.StatisticsDTO;
+import com.namata.userprofile.dto.FormattedStatisticsDTO;
 import com.namata.userprofile.service.StatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,18 +23,18 @@ import java.util.UUID;
 @RequestMapping("/api/v1/statistics")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Statistics", description = "APIs para gerenciamento de estatísticas dos usuários")
+@Tag(name = "Statistics", description = "API para gerenciamento de estatísticas")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
     @GetMapping("/user/{userId}")
-    @Operation(summary = "Buscar estatísticas do usuário", description = "Retorna as estatísticas de um usuário específico")
+    @Operation(summary = "Buscar estatísticas por usuário", description = "Retorna estatísticas de um usuário específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Estatísticas encontradas"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    public ResponseEntity<StatisticsDTO> getUserStatistics(
+    public ResponseEntity<StatisticsDTO> getStatisticsByUserId(
             @Parameter(description = "ID do usuário") @PathVariable UUID userId) {
         log.info("Buscando estatísticas do usuário ID: {}", userId);
 
@@ -41,6 +42,26 @@ public class StatisticsController {
             StatisticsDTO statistics = statisticsService.getStatisticsByUserId(userId);
             return ResponseEntity.ok(statistics);
         } catch (IllegalArgumentException e) {
+            log.error("Usuário não encontrado: {}", userId);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @GetMapping("/user/{userId}/formatted")
+    @Operation(summary = "Buscar estatísticas formatadas por usuário", description = "Retorna estatísticas de um usuário específico com formatação para apresentação no app")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estatísticas formatadas encontradas"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    public ResponseEntity<FormattedStatisticsDTO> getFormattedStatisticsByUserId(
+            @Parameter(description = "ID do usuário") @PathVariable UUID userId) {
+        log.info("Buscando estatísticas formatadas do usuário ID: {}", userId);
+
+        try {
+            FormattedStatisticsDTO formattedStatistics = statisticsService.getFormattedStatisticsByUserId(userId);
+            return ResponseEntity.ok(formattedStatistics);
+        } catch (IllegalArgumentException e) {
+            log.error("Usuário não encontrado: {}", userId);
             return ResponseEntity.notFound().build();
         }
     }
@@ -203,6 +224,65 @@ public class StatisticsController {
             return ResponseEntity.ok(statistics);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/user/{userId}/complete-trail")
+    @Operation(summary = "Atualizar estatísticas de trilha completada", description = "Atualiza as estatísticas do usuário quando uma trilha é completada")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Estatísticas atualizadas com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    public ResponseEntity<StatisticsDTO> completeTrail(
+            @Parameter(description = "ID do usuário") @PathVariable UUID userId,
+            @Parameter(description = "Distância percorrida (km)") @RequestParam Double distance,
+            @Parameter(description = "Tempo total (minutos)") @RequestParam Integer totalTime,
+            @Parameter(description = "Ganho de elevação (metros)") @RequestParam Double elevationGain,
+            @Parameter(description = "Elevação máxima da trilha (metros)") @RequestParam(required = false) Integer maxElevation) {
+        
+        log.info("Atualizando estatísticas de trilha completada para usuário ID: {} - Distance: {}km, Time: {}min, Elevation: {}m", 
+                userId, distance, totalTime, elevationGain);
+
+        try {
+            // Incrementar trilhas completadas e atualizar outras estatísticas
+            StatisticsDTO currentStats = statisticsService.getStatisticsByUserId(userId);
+            
+            // Calcular novos valores
+            Integer newTrailsCompleted = currentStats.getTotalTrailsCompleted() + 1;
+            Double newTotalDistance = currentStats.getTotalDistanceKm() + distance;
+            Integer newTotalTime = currentStats.getTotalTimeMinutes() + totalTime;
+            Double newTotalElevationGain = currentStats.getTotalElevationGainM() + elevationGain;
+            
+            // Calcular pontos baseados na distância (1 km = 1 ponto)
+            Integer pointsEarned = distance.intValue(); // Arredondar para baixo
+            Integer newTotalPoints = currentStats.getTotalPoints() + pointsEarned;
+            
+            // Verificar se é a trilha mais longa
+            Double longestTrail = distance > currentStats.getLongestTrailKm() ? distance : null;
+            
+            // Verificar se é a maior elevação
+            Integer highestElevation = null;
+            if (maxElevation != null && maxElevation > currentStats.getHighestElevationM()) {
+                highestElevation = maxElevation;
+            }
+            
+            // Atualizar estatísticas
+            StatisticsDTO statistics = statisticsService.updateTrailStatistics(
+                    userId, newTrailsCompleted, newTotalDistance, newTotalTime, 
+                    newTotalElevationGain, longestTrail, highestElevation, newTotalPoints);
+            
+            // Atualizar última atividade
+            statisticsService.updateLastActivity(userId);
+            
+            log.info("Estatísticas atualizadas com sucesso para usuário {}: {} trilhas, {}km, {} pontos", 
+                    userId, statistics.getTotalTrailsCompleted(), statistics.getTotalDistanceKm(), statistics.getTotalPoints());
+            return ResponseEntity.ok(statistics);
+        } catch (IllegalArgumentException e) {
+            log.warn("Usuário não encontrado ao atualizar estatísticas: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro interno ao atualizar estatísticas para usuário {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.status(500).build();
         }
     }
 

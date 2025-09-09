@@ -6,11 +6,12 @@ C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\config\DatabaseConfig.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\entity\UserSavedTrail.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\repository\AchievementRepository.java
+C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\util\StatisticsFormatter.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\dto\SaveTrailRequest.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\entity\Badge.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\dto\CreateUserProfileRequest.java
+C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\dto\FormattedStatisticsDTO.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\service\UserProfileService.java
-C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\controller\TestDataController.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\repository\UserProfileRepository.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\client\AuthServiceClient.java
 C:\Users\Ivanilson\Projetos\NaMata\user-profile-service\src\main\java\com\namata\userprofile\client\AuthServiceClientConfig.java

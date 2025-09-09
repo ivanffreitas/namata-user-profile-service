@@ -1,10 +1,12 @@
 package com.namata.userprofile.service;
 
 import com.namata.userprofile.dto.StatisticsDTO;
+import com.namata.userprofile.dto.FormattedStatisticsDTO;
 import com.namata.userprofile.entity.Statistics;
 import com.namata.userprofile.entity.UserProfile;
 import com.namata.userprofile.repository.StatisticsRepository;
 import com.namata.userprofile.repository.UserProfileRepository;
+import com.namata.userprofile.util.StatisticsFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -71,13 +73,32 @@ public class StatisticsService {
 
         return convertToDTO(statistics);
     }
+    
+    @Transactional
+    public FormattedStatisticsDTO getFormattedStatisticsByUserId(UUID userId) {
+        UserProfile userProfile = userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Perfil de usuário não encontrado"));
+
+        Statistics statistics = statisticsRepository.findByUserProfile(userProfile)
+                .orElseGet(() -> createStatistics(userId));
+
+        return convertToFormattedDTO(statistics);
+    }
 
     // Métodos para atualizar estatísticas de trilhas
     @Transactional
     public StatisticsDTO updateTrailStatistics(UUID userId, Integer trailsCompleted, 
                                           Double totalDistance, Integer totalTime, 
-                                          Integer totalElevationGain, Double longestTrail, 
+                                          Double totalElevationGain, Double longestTrail, 
                                           Integer highestElevation) {
+        return updateTrailStatistics(userId, trailsCompleted, totalDistance, totalTime, 
+                                   totalElevationGain, longestTrail, highestElevation, null);
+    }
+    
+    public StatisticsDTO updateTrailStatistics(UUID userId, Integer trailsCompleted, 
+                                          Double totalDistance, Integer totalTime, 
+                                          Double totalElevationGain, Double longestTrail, 
+                                          Integer highestElevation, Integer totalPoints) {
         log.info("Atualizando estatísticas de trilhas para usuário ID: {}", userId);
 
         UserProfile userProfile = userProfileRepository.findByUserId(userId)
@@ -96,7 +117,7 @@ public class StatisticsService {
             statistics.setTotalTimeMinutes(totalTime);
         }
         if (totalElevationGain != null) {
-            statistics.setTotalElevationGainM(totalElevationGain.doubleValue());
+            statistics.setTotalElevationGainM(totalElevationGain);
         }
         if (longestTrail != null) {
             statistics.setLongestTrailKm(longestTrail.intValue());
@@ -104,11 +125,16 @@ public class StatisticsService {
         if (highestElevation != null) {
             statistics.setHighestElevationM(highestElevation);
         }
+        if (totalPoints != null) {
+            statistics.setTotalPoints(totalPoints);
+        }
 
         Statistics updatedStatistics = statisticsRepository.save(statistics);
+        
         log.info("Estatísticas de trilhas atualizadas para usuário ID: {}", userId);
+        StatisticsDTO dto = convertToDTO(updatedStatistics);
 
-        return convertToDTO(updatedStatistics);
+        return dto;
     }
 
     // Métodos para incrementar estatísticas de trilhas
@@ -376,6 +402,50 @@ public class StatisticsService {
                 .totalElevationGainM(statistics.getTotalElevationGainM())
                 .longestTrailKm(statistics.getLongestTrailKm())
                 .highestElevationM(statistics.getHighestElevationM())
+                .totalPhotosShared(statistics.getTotalPhotosShared())
+                .totalReviewsPosted(statistics.getTotalReviewsPosted())
+                .totalLikesReceived(statistics.getTotalLikesReceived())
+                .totalCommentsReceived(statistics.getTotalCommentsReceived())
+                .totalBadgesEarned(statistics.getTotalBadgesEarned())
+                .totalPoints(statistics.getTotalPoints())
+                .currentStreak(statistics.getCurrentStreak())
+                .longestStreak(statistics.getLongestStreak())
+                .totalFollowers(statistics.getTotalFollowers())
+                .totalFollowing(statistics.getTotalFollowing())
+                .totalGuidesBooked(statistics.getTotalGuidesBooked())
+                .globalRank(statistics.getGlobalRank())
+                .localRank(statistics.getLocalRank())
+                .lastActivityAt(statistics.getLastActivityAt())
+                .updatedAt(statistics.getUpdatedAt())
+                .build();
+    }
+    
+    /**
+     * Converte Statistics para FormattedStatisticsDTO com formatação para apresentação
+     * @param statistics Entidade Statistics
+     * @return FormattedStatisticsDTO com valores formatados
+     */
+    public FormattedStatisticsDTO convertToFormattedDTO(Statistics statistics) {
+        return FormattedStatisticsDTO.builder()
+                .id(statistics.getId())
+                .userProfileId(statistics.getUserProfile().getId())
+                .totalTrailsCompleted(statistics.getTotalTrailsCompleted())
+                
+                // Valores formatados para apresentação
+                .totalDistanceFormatted(StatisticsFormatter.formatDistance(statistics.getTotalDistanceKm()))
+                .totalTimeFormatted(StatisticsFormatter.formatTime(statistics.getTotalTimeMinutes()))
+                .totalElevationGainFormatted(StatisticsFormatter.formatElevation(statistics.getTotalElevationGainM()))
+                .longestTrailFormatted(StatisticsFormatter.formatDistance(statistics.getLongestTrailKm().doubleValue()))
+                .highestElevationFormatted(StatisticsFormatter.formatElevation(statistics.getHighestElevationM()))
+                
+                // Valores brutos mantidos para compatibilidade
+                .totalDistanceKm(statistics.getTotalDistanceKm())
+                .totalTimeMinutes(statistics.getTotalTimeMinutes())
+                .totalElevationGainM(statistics.getTotalElevationGainM())
+                .longestTrailKm(statistics.getLongestTrailKm())
+                .highestElevationM(statistics.getHighestElevationM())
+                
+                // Outras estatísticas
                 .totalPhotosShared(statistics.getTotalPhotosShared())
                 .totalReviewsPosted(statistics.getTotalReviewsPosted())
                 .totalLikesReceived(statistics.getTotalLikesReceived())
