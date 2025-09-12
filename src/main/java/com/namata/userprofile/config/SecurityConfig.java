@@ -85,8 +85,8 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         // Usar o mesmo método que o auth-service para garantir compatibilidade
-        javax.crypto.SecretKey secretKey = io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        return NimbusJwtDecoder.withSecretKey(secretKey)
+        byte[] keyBytes = jwtSecret.getBytes();
+        return NimbusJwtDecoder.withSecretKey(new javax.crypto.spec.SecretKeySpec(keyBytes, "HmacSHA256"))
                 .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
                 .build();
     }
