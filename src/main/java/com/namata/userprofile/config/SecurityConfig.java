@@ -55,6 +55,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/ranking/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/averages/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/max/**").permitAll()
+                        // Endpoints de ranking e busca pública de perfis
+                        .requestMatchers(HttpMethod.GET, "/api/v1/profiles/ranking/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/profiles/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/profiles/location/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/profiles/experience/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/profiles/active").permitAll()
 
                         // Endpoints que requerem autenticação
                         .requestMatchers("/api/v1/profiles/**").authenticated()

@@ -11,6 +11,6 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Configurar para servir imagens de perfil
         registry.addResourceHandler("/uploads/profile-pictures/**")
-                .addResourceLocations("file:C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures/");
+                .addResourceLocations("file:/var/namata/uploads/profile-pictures/");
     }
 }
