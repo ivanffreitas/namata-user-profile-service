@@ -1,33 +1,36 @@
-# Usar imagem base do OpenJDK 17
-FROM openjdk:17-jdk-slim
+FROM maven:3.9.4-eclipse-temurin-21 AS build
 
-# Definir diretório de trabalho
+# Set working directory
 WORKDIR /app
 
-# Instalar curl para health checks
+# Copy pom.xml first for better caching
+COPY pom.xml ./
+
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:21-jre
+
+# Set working directory
+WORKDIR /app
+
+# Copy the built jar from build stage
+COPY --from=build /app/target/user-profile-service-0.0.1-SNAPSHOT.jar ./user-profile-service.jar
+
+# Install curl for health checks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Copiar arquivos de configuração do Maven
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
-
-# Dar permissão de execução ao mvnw
-RUN chmod +x mvnw
-
-# Baixar dependências (cache layer)
-RUN ./mvnw dependency:go-offline -B
-
-# Copiar código fonte
-COPY src src
-
-# Compilar aplicação
-RUN ./mvnw clean package -DskipTests
-
-# Expor porta da aplicação
+# Expose port
 EXPOSE 8082
 
-# Definir variáveis de ambiente
+# Set environment variables
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
 ENV SPRING_PROFILES_ACTIVE=docker
 
@@ -35,5 +38,5 @@ ENV SPRING_PROFILES_ACTIVE=docker
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8082/actuator/health || exit 1
 
-# Executar aplicação
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar target/user-profile-service-*.jar"]
+# Run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar user-profile-service.jar"]

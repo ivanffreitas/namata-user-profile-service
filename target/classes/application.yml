@@ -74,7 +74,7 @@ spring:
 app:
   auth:
     jwt:
-      secret: ${JWT_SECRET:NaMataSecretKeyForJWTTokenGenerationAndValidation2024}
+      secret: ${JWT_SECRET:10a4fbca7931c103edca921d87fa434fbd45f944e1c2ffc05d96408283201e60}
   services:
     auth-service:
       url: ${AUTH_SERVICE_URL:http://192.168.1.9:8082}
