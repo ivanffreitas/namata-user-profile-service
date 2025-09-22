@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8086
 
 spring:
   application:
@@ -51,10 +51,10 @@ spring:
 app:
   auth:
     jwt:
-      jwk-set-uri: ${AUTH_SERVICE_URL:http://auth-service:8081}/api/v1/auth/.well-known/jwks.json
+      jwk-set-uri: ${AUTH_SERVICE_URL:http://namata-auth-service:8082}/api/v1/auth/.well-known/jwks.json
   services:
     auth-service:
-      url: ${AUTH_SERVICE_URL:http://auth-service:8081}
+      url: ${AUTH_SERVICE_URL:http://namata-auth-service:8082}
   upload:
     directory: ${UPLOAD_DIR:/var/namata/uploads/profile-pictures}
 

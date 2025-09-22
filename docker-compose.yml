@@ -17,7 +17,7 @@ services:
       - DB_PASSWORD=admin
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - AUTH_SERVICE_URL=http://auth-service:8081
+      - AUTH_SERVICE_URL=http://auth-service:8082
       - JAVA_OPTS=-Xmx512m -Xms256m
     depends_on:
       - postgres
