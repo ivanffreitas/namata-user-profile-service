@@ -78,6 +78,9 @@ app:
   services:
     auth-service:
       url: ${AUTH_SERVICE_URL:http://192.168.1.9:8082}
+  upload:
+    profile-pictures:
+      directory: ${PROFILE_PICTURES_UPLOAD_DIR:C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures}
     trail-service:
       url: ${TRAIL_SERVICE_URL:http://192.168.1.9:8085}
 

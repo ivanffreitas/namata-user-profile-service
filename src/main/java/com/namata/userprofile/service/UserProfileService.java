@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,9 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final StatisticsRepository statisticsRepository;
     private final AuthServiceClient authServiceClient;
+    
+    @Value("${app.upload.profile-pictures.directory}")
+    private String uploadDir;
 
     public UserProfileDTO createProfile(CreateUserProfileRequest request) {
         log.info("Criando perfil para usuário ID: {}", request.getUserId());
@@ -244,7 +248,6 @@ public class UserProfileService {
         
         try {
             // Criar diretório se não existir
-            String uploadDir = "C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
