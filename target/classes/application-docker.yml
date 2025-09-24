@@ -56,7 +56,7 @@ app:
     auth-service:
       url: ${AUTH_SERVICE_URL:http://namata-auth-service:8082}
   upload:
-    directory: ${UPLOAD_DIR:/var/namata/uploads/profile-pictures}
+    directory: ${PROFILE_PICTURES_UPLOAD_DIR:/var/namata/uploads/profile-pictures}
 
 logging:
   level:
