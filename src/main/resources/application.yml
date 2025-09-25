@@ -78,11 +78,11 @@ app:
   services:
     auth-service:
       url: ${AUTH_SERVICE_URL:http://auth-service:8082}
+    trail-service:
+      url: ${TRAIL_SERVICE_URL:http://trail-service:8085}
   upload:
     profile-pictures:
       directory: ${PROFILE_PICTURES_UPLOAD_DIR:/app/uploads/profile-pictures}
-    trail-service:
-      url: ${TRAIL_SERVICE_URL:http://trail-service:8085}
 
 logging:
   level:
