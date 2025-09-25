@@ -37,8 +37,8 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final StatisticsRepository statisticsRepository;
     private final AuthServiceClient authServiceClient;
-
-    @Value("${app.upload.profile-pictures.directory}")
+    
+    @Value("${upload.profile-pictures.directory}")
     private String uploadDir;
 
     public UserProfileDTO createProfile(CreateUserProfileRequest request) {
@@ -58,12 +58,12 @@ public class UserProfileService {
                 .gender(request.getGender())
                 .location(request.getLocation())
                 .phoneNumber(request.getPhoneNumber())
-                .experienceLevel(request.getExperienceLevel() != null ? request.getExperienceLevel()
-                        : UserProfile.ExperienceLevel.BEGINNER)
+                .experienceLevel(request.getExperienceLevel() != null ? 
+                    request.getExperienceLevel() : UserProfile.ExperienceLevel.BEGINNER)
                 .interests(request.getInterests())
                 .explorationType(request.getExplorationType())
-                .privacyLevel(
-                        request.getPrivacyLevel() != null ? request.getPrivacyLevel() : UserProfile.PrivacyLevel.PUBLIC)
+                .privacyLevel(request.getPrivacyLevel() != null ? 
+                    request.getPrivacyLevel() : UserProfile.PrivacyLevel.PUBLIC)
                 .isActive(true)
                 .isVerified(false)
                 .build();
@@ -133,7 +133,7 @@ public class UserProfileService {
 
         UserProfile updatedProfile = userProfileRepository.save(profile);
         log.info("Perfil atualizado com sucesso para usuário ID: {}", userId);
-
+        
         return convertToDTO(updatedProfile);
     }
 
@@ -168,16 +168,16 @@ public class UserProfileService {
                 .map(this::convertToDTOWithoutStats)
                 .toList();
     }
-
+    
     @Transactional(readOnly = true)
     public long countActiveProfiles() {
         return userProfileRepository.countActiveProfiles();
     }
 
     @Transactional(readOnly = true)
-    public Page<UserProfileDTO> searchProfiles(String displayName, String location,
-            UserProfile.ExperienceLevel experienceLevel,
-            Pageable pageable) {
+    public Page<UserProfileDTO> searchProfiles(String displayName, String location, 
+                                              UserProfile.ExperienceLevel experienceLevel, 
+                                              Pageable pageable) {
         return userProfileRepository.findProfilesWithFilters(displayName, location, experienceLevel, pageable)
                 .map(this::convertToDTO);
     }
@@ -200,80 +200,79 @@ public class UserProfileService {
 
     public Page<UserProfileDTO> getRankingByPoints(Pageable pageable) {
         log.info("Buscando ranking por pontos");
-
+        
         // Buscar todos os perfis com suas estatísticas, ordenados por pontos
         List<UserProfile> profiles = userProfileRepository.findAll();
-
+        
         // Converter para DTO e ordenar por pontos (decrescente)
         List<UserProfileDTO> profileDTOs = profiles.stream()
                 .map(this::convertToDTO)
                 .sorted((a, b) -> Integer.compare(b.getTotalPoints(), a.getTotalPoints()))
                 .toList();
-
+        
         // Converter para Page
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), profileDTOs.size());
-
+        
         List<UserProfileDTO> pageContent = profileDTOs.subList(start, end);
-
+        
         return new PageImpl<>(pageContent, pageable, profileDTOs.size());
     }
-
+    
     public Page<UserProfileDTO> getRankingByTrails(Pageable pageable) {
         log.info("Buscando ranking por trilhas");
-
+        
         // Buscar todos os perfis com suas estatísticas, ordenados por trilhas
         List<UserProfile> profiles = userProfileRepository.findAll();
-
+        
         // Converter para DTO e ordenar por trilhas (decrescente)
         List<UserProfileDTO> profileDTOs = profiles.stream()
                 .map(this::convertToDTO)
                 .sorted((a, b) -> Integer.compare(b.getTotalTrailsCompleted(), a.getTotalTrailsCompleted()))
                 .toList();
-
+        
         // Converter para Page
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), profileDTOs.size());
-
+        
         List<UserProfileDTO> pageContent = profileDTOs.subList(start, end);
-
+        
         return new PageImpl<>(pageContent, pageable, profileDTOs.size());
     }
 
     public UserProfileDTO updateProfilePicture(UUID userId, MultipartFile file) {
         log.info("Atualizando foto de perfil para usuário ID: {}", userId);
-
+        
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o usuário: " + userId));
-
+        
         try {
             // Criar diretório se não existir
-            String uploadDir = "C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-
+            
             // Gerar nome único para o arquivo
             String originalFilename = file.getOriginalFilename();
             String fileExtension = originalFilename != null && originalFilename.contains(".")
                     ? originalFilename.substring(originalFilename.lastIndexOf("."))
                     : ".jpg";
             String filename = userId + "_" + System.currentTimeMillis() + fileExtension;
-
+            
             // Salvar arquivo
             Path filePath = uploadPath.resolve(filename);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+            
             // Atualizar URL no perfil
             String profilePictureUrl = "/uploads/profile-pictures/" + filename;
             profile.setProfilePictureUrl(profilePictureUrl);
-
+            
             UserProfile savedProfile = userProfileRepository.save(profile);
             log.info("Foto de perfil atualizada com sucesso para usuário ID: {}", userId);
-
+            
             return convertToDTO(savedProfile);
-
+            
         } catch (IOException e) {
             log.error("Erro ao salvar arquivo de imagem: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
@@ -283,7 +282,7 @@ public class UserProfileService {
     private UserProfileDTO convertToDTO(UserProfile profile) {
         // Buscar estatísticas básicas
         Statistics stats = statisticsRepository.findByUserProfile(profile).orElse(null);
-
+        
         // Buscar firstName do auth-service
         String firstName = null;
         try {
@@ -317,7 +316,7 @@ public class UserProfileService {
                 .totalPoints(stats != null ? stats.getTotalPoints() : 0)
                 .build();
     }
-
+    
     private UserProfileDTO convertToDTOWithoutStats(UserProfile profile) {
         return UserProfileDTO.builder()
                 .id(profile.getId())

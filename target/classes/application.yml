@@ -19,7 +19,7 @@ spring:
       max-request-size: 100MB
   
   datasource:
-    url: jdbc:postgresql://192.168.1.9:5432/namata_profile
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:namata_profile}
     username: ${DB_USERNAME:postgres} 
     password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
@@ -77,12 +77,12 @@ app:
       secret: ${JWT_SECRET:10a4fbca7931c103edca921d87fa434fbd45f944e1c2ffc05d96408283201e60}
   services:
     auth-service:
-      url: ${AUTH_SERVICE_URL:http://192.168.1.9:8082}
+      url: ${AUTH_SERVICE_URL:http://auth-service:8082}
   upload:
     profile-pictures:
-      directory: ${PROFILE_PICTURES_UPLOAD_DIR:C:/Users/Ivanilson/Projetos/NaMata/uploads/profile-pictures}
+      directory: ${PROFILE_PICTURES_UPLOAD_DIR:/app/uploads/profile-pictures}
     trail-service:
-      url: ${TRAIL_SERVICE_URL:http://192.168.1.9:8085}
+      url: ${TRAIL_SERVICE_URL:http://trail-service:8085}
 
 logging:
   level:
