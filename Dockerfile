@@ -16,16 +16,15 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:21.0.4_7-jre
+FROM eclipse-temurin:21-jre
 
 # Set working directory
 WORKDIR /app
 
-# Copy the built jar from build stage
-COPY --from=build /app/target/user-profile-service-0.0.1-SNAPSHOT.jar ./user-profile-service.jar
-
 # Install curl for health checks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Copy the built jar from build stage
+COPY --from=build /app/target/user-profile-service-0.0.1-SNAPSHOT.jar ./user-profile-service.jar
 
 # Expose port
 EXPOSE 8086
