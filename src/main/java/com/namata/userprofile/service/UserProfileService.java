@@ -38,7 +38,7 @@ public class UserProfileService {
     private final StatisticsRepository statisticsRepository;
     private final AuthServiceClient authServiceClient;
     
-    @Value("${upload.profile-pictures.directory}")
+    @Value("${app.upload.profile-pictures.directory}")
     private String uploadDir;
 
     public UserProfileDTO createProfile(CreateUserProfileRequest request) {
