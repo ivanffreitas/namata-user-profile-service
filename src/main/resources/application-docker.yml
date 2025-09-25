@@ -52,11 +52,15 @@ app:
   auth:
     jwt:
       jwk-set-uri: ${AUTH_SERVICE_URL:http://namata-auth-service:8082}/api/v1/auth/.well-known/jwks.json
+      secret: ${JWT_SECRET:10a4fbca7931c103edca921d87fa434fbd45f944e1c2ffc05d96408283201e60}
   services:
     auth-service:
       url: ${AUTH_SERVICE_URL:http://namata-auth-service:8082}
+    trail-service:
+      url: ${TRAIL_SERVICE_URL:http://trail-service:8085}
   upload:
-    directory: ${PROFILE_PICTURES_UPLOAD_DIR:/var/namata/uploads/profile-pictures}
+    profile-pictures:
+      directory: ${PROFILE_PICTURES_UPLOAD_DIR:/var/namata/uploads/profile-pictures}
 
 logging:
   level:

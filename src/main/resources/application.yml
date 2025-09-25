@@ -8,9 +8,7 @@ spring:
   profiles:
     active: dev
   autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+    exclude: []
   
   servlet:
     multipart:
@@ -49,22 +47,22 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   
   # Redis temporariamente desabilitado para teste
-  # redis:
-  #   host: ${REDIS_HOST:localhost}
-  #   port: ${REDIS_PORT:6379}
-  #   password: ${REDIS_PASSWORD:}
-  #   database: 0
-  #   timeout: 2000ms
-  #   lettuce:
-  #     pool:
-  #       max-active: 8
-  #       max-idle: 8
-  #       min-idle: 0
-  
-  # cache:
-  #   type: redis
-  #   redis:
-  #     time-to-live: 1800000 # 30 minutos
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000 # 30 minutos
   
   flyway:
     enabled: false
