@@ -1,4 +1,4 @@
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM maven:3.9.6-openjdk-21 AS build
 
 # Set working directory
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:21-jre
+FROM openjdk:21-jre-slim
 
 # Set working directory
 WORKDIR /app
