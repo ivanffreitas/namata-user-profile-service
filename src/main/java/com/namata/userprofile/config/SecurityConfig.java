@@ -52,12 +52,13 @@ public class SecurityConfig {
     @Order(3)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher(request -> !request.getRequestURI().startsWith("/actuator") && 
+                                          !request.getRequestURI().startsWith("/api/v1/test"))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos (sem autenticação)
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/badges/active", "/api/v1/badges/type/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/ranking/**").permitAll()
