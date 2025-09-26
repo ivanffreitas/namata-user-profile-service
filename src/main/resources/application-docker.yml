@@ -35,6 +35,7 @@ spring:
     host: ${REDIS_HOST:namata-redis}
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
+    username: ${REDIS_USERNAME:}
     database: 0
     timeout: 2000ms
     lettuce:
@@ -47,7 +48,7 @@ spring:
     type: redis
     redis:
       time-to-live: 600000
-      enabled: ${REDIS_ENABLED:false}
+      enabled: ${REDIS_ENABLED:true}
 
 app:
   auth:

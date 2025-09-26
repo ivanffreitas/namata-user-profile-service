@@ -36,6 +36,9 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${spring.redis.password:}")
     private String redisPassword;
 
+    @Value("${spring.redis.username:}")
+    private String redisUsername;
+
     @Value("${spring.redis.database:0}")
     private int redisDatabase;
 
@@ -52,6 +55,10 @@ public class RedisConfig extends CachingConfigurerSupport {
 
         if (redisPassword != null && !redisPassword.isEmpty()) {
             config.setPassword(redisPassword);
+        }
+
+        if (redisUsername != null && !redisUsername.isEmpty()) {
+            config.setUsername(redisUsername);
         }
 
         return new LettuceConnectionFactory(config);
