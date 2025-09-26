@@ -48,7 +48,7 @@ spring:
     type: redis
     redis:
       time-to-live: 600000
-      enabled: ${REDIS_ENABLED:true}
+      enabled: ${REDIS_ENABLED:false}
 
 app:
   auth:
