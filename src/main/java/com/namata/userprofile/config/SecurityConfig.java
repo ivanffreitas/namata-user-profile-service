@@ -28,6 +28,17 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
+    public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/actuator/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
+                .build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/api/v1/test/**")
@@ -38,7 +49,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
