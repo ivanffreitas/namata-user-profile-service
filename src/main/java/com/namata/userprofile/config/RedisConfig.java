@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -36,7 +39,11 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${spring.redis.database:0}")
     private int redisDatabase;
 
+    @Value("${spring.cache.redis.enabled:true}")
+    private boolean redisEnabled;
+
     @Bean
+    @ConditionalOnProperty(name = "spring.cache.redis.enabled", havingValue = "true", matchIfMissing = true)
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
@@ -51,6 +58,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.cache.redis.enabled", havingValue = "true", matchIfMissing = true)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -77,6 +85,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Primary
+    @ConditionalOnProperty(name = "spring.cache.redis.enabled", havingValue = "true", matchIfMissing = true)
     @Override
     public CacheManager cacheManager() {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
@@ -87,5 +97,11 @@ public class RedisConfig extends CachingConfigurerSupport {
                 .cacheDefaults(config)
                 .transactionAware()
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "spring.cache.redis.enabled", havingValue = "false")
+    public CacheManager fallbackCacheManager() {
+        return new ConcurrentMapCacheManager();
     }
 }
