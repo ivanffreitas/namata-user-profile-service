@@ -22,7 +22,6 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@Profile({ "!h2", "!dev" })
 public class SecurityConfig {
 
     @Value("${app.auth.jwt.secret}")

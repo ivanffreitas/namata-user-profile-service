@@ -23,7 +23,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 @Configuration
-@Profile("!h2")
 public class RedisConfig extends CachingConfigurerSupport {
 
     @Value("${spring.redis.host:localhost}")
