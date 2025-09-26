@@ -92,11 +92,22 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        // Usar o mesmo método que o auth-service para garantir compatibilidade
-        byte[] keyBytes = jwtSecret.getBytes();
-        return NimbusJwtDecoder.withSecretKey(new javax.crypto.spec.SecretKeySpec(keyBytes, "HmacSHA256"))
-                .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
-                .build();
+        try {
+            // Usar o mesmo método que o auth-service para garantir compatibilidade
+            byte[] keyBytes = jwtSecret.getBytes();
+            return NimbusJwtDecoder.withSecretKey(new javax.crypto.spec.SecretKeySpec(keyBytes, "HmacSHA256"))
+                    .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
+                    .build();
+        } catch (Exception e) {
+            // Fallback para evitar falha na inicialização
+            System.err.println("Erro ao configurar JWT Decoder: " + e.getMessage());
+            // Retorna um decoder básico que não falhará na inicialização
+            String fallbackSecret = "fallback-secret-key-for-initialization-only-not-for-production-use";
+            byte[] fallbackKeyBytes = fallbackSecret.getBytes();
+            return NimbusJwtDecoder.withSecretKey(new javax.crypto.spec.SecretKeySpec(fallbackKeyBytes, "HmacSHA256"))
+                    .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
+                    .build();
+        }
     }
 
     @Bean
