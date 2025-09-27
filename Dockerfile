@@ -1,10 +1,10 @@
-FROM maven:3.9.4-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 # Set working directory
 WORKDIR /app
 
 # Copy pom.xml first for better caching
-COPY pom.xml ./
+COPY pom.xml .
 
 # Download dependencies
 RUN mvn dependency:go-offline -B
@@ -33,9 +33,9 @@ EXPOSE 8086
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
 ENV SPRING_PROFILES_ACTIVE=docker
 
-# Health check - mais resiliente, verifica se o processo Java está rodando
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-  CMD curl -f http://localhost:8086/actuator/health || curl -f http://localhost:8086/ || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8086/actuator/health || exit 1
 
 # Run the application
-CMD ["java", "-jar", "user-profile-service.jar"]
+ENTRYPOINT ["java", "-jar", "user-profile-service.jar"]
