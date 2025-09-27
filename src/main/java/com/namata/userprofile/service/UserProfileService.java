@@ -1,6 +1,5 @@
 package com.namata.userprofile.service;
 
-import com.namata.userprofile.client.AuthServiceClient;
 import com.namata.userprofile.dto.CreateUserProfileRequest;
 import com.namata.userprofile.dto.UpdateUserProfileRequest;
 import com.namata.userprofile.dto.UserProfileDTO;
@@ -24,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,7 +34,6 @@ public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final StatisticsRepository statisticsRepository;
-    private final AuthServiceClient authServiceClient;
     
     @Value("${app.upload.profile-pictures.directory}")
     private String uploadDir;
@@ -283,14 +280,9 @@ public class UserProfileService {
         // Buscar estatísticas básicas
         Statistics stats = statisticsRepository.findByUserProfile(profile).orElse(null);
         
-        // Buscar firstName do auth-service
+        // Nota: firstName não está mais disponível do auth-service
+        // Pode ser adicionado ao UserProfile se necessário
         String firstName = null;
-        try {
-            Map<String, Object> userData = authServiceClient.getUserById(profile.getUserId());
-            firstName = (String) userData.get("firstName");
-        } catch (Exception e) {
-            log.warn("Erro ao buscar dados do usuário do auth-service: {}", e.getMessage());
-        }
 
         return UserProfileDTO.builder()
                 .id(profile.getId())

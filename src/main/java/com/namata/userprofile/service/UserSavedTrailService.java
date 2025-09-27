@@ -1,6 +1,5 @@
 package com.namata.userprofile.service;
 
-import com.namata.userprofile.client.TrailServiceClient;
 import com.namata.userprofile.dto.SaveTrailRequest;
 import com.namata.userprofile.dto.UserSavedTrailDTO;
 import com.namata.userprofile.entity.UserProfile;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,7 +28,6 @@ public class UserSavedTrailService {
 
     private final UserSavedTrailRepository userSavedTrailRepository;
     private final UserProfileRepository userProfileRepository;
-    private final TrailServiceClient trailServiceClient;
 
     public UserSavedTrailDTO saveTrail(UUID userId, SaveTrailRequest request) {
         log.info("Salvando trilha {} para usuário ID: {}", request.getTrailId(), userId);
@@ -168,20 +165,9 @@ public class UserSavedTrailService {
                 .savedAt(savedTrail.getSavedAt())
                 .isActive(savedTrail.getIsActive());
 
-        // Buscar detalhes da trilha do trail-service
-        try {
-            Map<String, Object> trailDetails = trailServiceClient.getTrailById(savedTrail.getTrailId());
-            if (trailDetails != null) {
-                builder.trailName((String) trailDetails.get("name"))
-                       .trailDescription((String) trailDetails.get("description"))
-                       .difficultyLevel((String) trailDetails.get("difficultyLevel"))
-                       .distanceKm(trailDetails.get("distanceKm") != null ? trailDetails.get("distanceKm").toString() : null)
-                       .durationHours(trailDetails.get("durationHours") != null ? trailDetails.get("durationHours").toString() : null);
-            }
-        } catch (Exception e) {
-            log.warn("Erro ao buscar detalhes da trilha {}: {}", savedTrail.getTrailId(), e.getMessage());
-            // Continua sem os detalhes da trilha se houver erro
-        }
+        // Nota: Detalhes da trilha não estão mais disponíveis do trail-service
+        // Os campos trailName, trailDescription, etc. ficarão null
+        // Pode ser implementado um cache local ou busca via API REST se necessário
 
         return builder.build();
     }
