@@ -32,17 +32,16 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   
   # Redis configuration
-  data:
-    redis:
-      host: ${REDIS_HOST:namata-redis}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:r1j0stn1guVRzyz4wMmiXiFBIC4G8PJo6z3PBkrnd9cUAHcZSdyIPrV4vUNePq7E}
-      timeout: 2000ms
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
+  redis:
+    host: ${REDIS_HOST:namata-redis}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:r1j0stn1guVRzyz4wMmiXiFBIC4G8PJo6z3PBkrnd9cUAHcZSdyIPrV4vUNePq7E}
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
   
   cache:
     type: redis
