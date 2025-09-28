@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos (sem autenticação)
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll() // Permitir acesso público aos arquivos estáticos
                         .requestMatchers("/api/v1/badges/active", "/api/v1/badges/type/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/ranking/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/averages/**").permitAll()
